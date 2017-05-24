@@ -87,6 +87,7 @@ public class XWingVirtualStack
 		calibration.pixelHeight = voxelDimensions[ 1 ];
 		calibration.pixelDepth = voxelDimensions[ 2 ];
 		imp.setCalibration( calibration );
+		imp.setDimensions( 1, ( int) img.dimension( 2 ), ( int ) img.dimension( 3 ) );
 
 		return imp;
 	}
