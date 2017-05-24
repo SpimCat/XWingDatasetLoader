@@ -2,7 +2,6 @@ package net.imglib2.cache.xwing;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ShortBuffer;
 import java.util.HashMap;
 
 import bdv.AbstractViewerSetupImgLoader;
@@ -26,8 +25,6 @@ import mpicbg.spim.data.sequence.TimePoint;
 import mpicbg.spim.data.sequence.TimePoints;
 import mpicbg.spim.data.sequence.ViewId;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.cache.UncheckedCache;
-import net.imglib2.cache.ref.GuardedStrongRefLoaderRemoverCache;
 import net.imglib2.cache.volatiles.CacheHints;
 import net.imglib2.cache.volatiles.LoadingStrategy;
 import net.imglib2.img.basictypeaccess.volatiles.array.VolatileShortArray;
@@ -41,61 +38,48 @@ import net.imglib2.type.volatiles.VolatileUnsignedShortType;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.Util;
 
-public class Playground
+public class XWingSpimData
 {
-	public static void main( final String[] args ) throws IOException
+	public static SpimDataMinimal open( final File directory, final int[] cellDimensions, final int numFetcherThreads ) throws IOException
 	{
-		final String name = "/Users/pietzsch/Desktop/nicola";
+		final XWingMetadata metadata = new XWingMetadata( directory );
 
-		final int[] cellDimensions = new int[] { 64, 64, 64 };
-		final int numFetcherThreads = 1;
+		final HashMap< Integer, TimePoint > timepointMap = new HashMap<>();
+		for ( int i = 0; i < metadata.size(); ++i )
+			timepointMap.put( i, new TimePoint( i ) );
 
-		final File directory = new File( name );
-		if ( directory.isDirectory() )
+		final HashMap< Integer, BasicViewSetup > setupMap = new HashMap<>();
+		final int setupId = 0;
+		setupMap.put( setupId, new BasicViewSetup( setupId, null, null, null ) );
+
+		final XWingImageLoader imgLoader = new XWingImageLoader( metadata, cellDimensions, numFetcherThreads );
+		final SequenceDescriptionMinimal seq = new SequenceDescriptionMinimal( new TimePoints( timepointMap ), setupMap, imgLoader, null );
+
+
+		final File basePath = directory;
+		final HashMap< ViewId, ViewRegistration > registrations = new HashMap<>();
+		for ( final TimePoint timepoint : seq.getTimePoints().getTimePointsOrdered() )
 		{
-			final XWingMetadata metadata = new XWingMetadata( directory );
-
-			final HashMap< Integer, TimePoint > timepointMap = new HashMap<>();
-			for ( int i = 0; i < metadata.size(); ++i )
-				timepointMap.put( i, new TimePoint( i ) );
-
-			final HashMap< Integer, BasicViewSetup > setupMap = new HashMap<>();
-			final int setupId = 0;
-			setupMap.put( setupId, new BasicViewSetup( setupId, null, null, null ) );
-
-			final XWingImageLoader imgLoader = new XWingImageLoader( metadata, cellDimensions, numFetcherThreads );
-			final SequenceDescriptionMinimal seq = new SequenceDescriptionMinimal( new TimePoints( timepointMap ), setupMap, imgLoader, null );
-
-
-			final File basePath = directory;
-			final HashMap< ViewId, ViewRegistration > registrations = new HashMap<>();
-			for ( final TimePoint timepoint : seq.getTimePoints().getTimePointsOrdered() )
-			{
-				final int timepointId = timepoint.getId();
-				final AffineTransform3D calib = new AffineTransform3D();
-				final double[] voxelDimensions = metadata.get( timepointId ).getVoxelDimensions();
-				calib.set( voxelDimensions[ 0 ], 0, 0 );
-				calib.set( voxelDimensions[ 1 ], 1, 1 );
-				calib.set( voxelDimensions[ 2 ], 2, 2 );
-				registrations.put( new ViewId( timepointId, setupId ), new ViewRegistration( timepointId, setupId, calib ) );
-			}
-			final SpimDataMinimal spimData = new SpimDataMinimal( basePath, seq, new ViewRegistrations( registrations ) );
-
-			final BigDataViewer bdv = BigDataViewer.open( spimData, "BigDataViewer", new ProgressWriterConsole(), ViewerOptions.options() );
-			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.getViewer(), bdv.getSetupAssignments() );
+			final int timepointId = timepoint.getId();
+			final AffineTransform3D calib = new AffineTransform3D();
+			final double[] voxelDimensions = metadata.get( timepointId ).getVoxelDimensions();
+			calib.set( voxelDimensions[ 0 ], 0, 0 );
+			calib.set( voxelDimensions[ 1 ], 1, 1 );
+			calib.set( voxelDimensions[ 2 ], 2, 2 );
+			registrations.put( new ViewId( timepointId, setupId ), new ViewRegistration( timepointId, setupId, calib ) );
 		}
+		final SpimDataMinimal spimData = new SpimDataMinimal( basePath, seq, new ViewRegistrations( registrations ) );
+
+		return spimData;
 	}
 
 	public static class XWingVolatileShortArrayLoader implements CacheArrayLoader< VolatileShortArray >
 	{
-		private final UncheckedCache< Integer, MemoryMappedStack > stackCache;
+		private final XWingCellDataLoader dataLoader;
 
 		public XWingVolatileShortArrayLoader( final XWingMetadata metadata )
 		{
-			stackCache = new GuardedStrongRefLoaderRemoverCache< Integer, MemoryMappedStack >( 3 )
-					.withLoader( t -> new MemoryMappedStack( metadata.get( t ) ) )
-					.withRemover( ( t, stack ) -> stack.close() )
-					.unchecked();
+			dataLoader = new XWingCellDataLoader( metadata );
 		}
 
 		@Override
@@ -107,29 +91,7 @@ public class Playground
 				final long[] min ) throws InterruptedException
 		{
 			final short[] data = new short[ ( int ) Intervals.numElements( dimensions ) ];
-			final MemoryMappedStack stack = stackCache.get( timepoint );
-			final ShortBuffer buf = stack.getBuffer();
-
-			final int minz = ( int ) min[ 2 ];
-			final int maxz = ( int ) min[ 2 ] + dimensions[ 2 ] - 1;
-			final int miny = ( int ) min[ 1 ];
-			final int maxy = ( int ) min[ 1 ] + dimensions[ 1 ] - 1;
-
-			final int celldimx = dimensions[ 0 ];
-
-			final int[] steps = stack.getSteps();
-			final int ystep = steps[ 1 ];
-			final int zstep = steps[ 2 ] - dimensions[ 1 ] * steps[ 1 ];
-
-			int ibuf = ( int ) ( min[ 0 ] + steps[ 1 ] * min[ 1 ] + steps[ 2 ] * min[ 2 ] );
-			int idata = 0;
-			for ( int z = minz; z <= maxz; ++z, ibuf += zstep )
-				for ( int y = miny; y <= maxy; ++y, ibuf += ystep, idata += celldimx )
-				{
-					buf.position( ibuf );
-					buf.get( data, idata, celldimx );
-				}
-
+			dataLoader.loadData( data, timepoint, dimensions, min );
 			return new VolatileShortArray( data, true );
 		}
 	}
@@ -221,6 +183,21 @@ public class Playground
 		public CacheControl getCacheControl()
 		{
 			return cache;
+		}
+	}
+
+	// test
+	public static void main( final String[] args ) throws IOException
+	{
+		final String name = "/Users/pietzsch/Desktop/nicola";
+		final int[] cellDimensions = new int[] { 64, 64, 64 };
+		final int numFetcherThreads = 1;
+		final File directory = new File( name );
+		if ( directory.isDirectory() )
+		{
+			final SpimDataMinimal spimData = open( directory, cellDimensions, numFetcherThreads );
+			final BigDataViewer bdv = BigDataViewer.open( spimData, "BigDataViewer", new ProgressWriterConsole(), ViewerOptions.options() );
+			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.getViewer(), bdv.getSetupAssignments() );
 		}
 	}
 }
