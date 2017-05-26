@@ -15,8 +15,10 @@ import bdv.img.cache.VolatileCachedCellImg;
 import bdv.img.cache.VolatileGlobalCellCache;
 import bdv.spimdata.SequenceDescriptionMinimal;
 import bdv.spimdata.SpimDataMinimal;
+import bdv.spimdata.XmlIoSpimDataMinimal;
 import bdv.tools.InitializeViewerState;
 import bdv.viewer.ViewerOptions;
+import mpicbg.spim.data.SpimDataException;
 import mpicbg.spim.data.generic.sequence.BasicViewSetup;
 import mpicbg.spim.data.generic.sequence.ImgLoaderHint;
 import mpicbg.spim.data.registration.ViewRegistration;
@@ -110,6 +112,8 @@ public class XWingSpimData
 
 		private final int[] cellDimensions;
 
+		private final int numFetcherThreads;
+
 		public XWingImageLoader(
 				final XWingMetadata metadata,
 				final int[] cellDimensions,
@@ -122,6 +126,7 @@ public class XWingSpimData
 			loader = new XWingVolatileShortArrayLoader( metadata );
 			this.metadata = metadata;
 			this.cellDimensions = cellDimensions;
+			this.numFetcherThreads = numFetcherThreads;
 		}
 
 		/**
@@ -184,10 +189,25 @@ public class XWingSpimData
 		{
 			return cache;
 		}
+
+		XWingMetadata getMetadata()
+		{
+			return metadata;
+		}
+
+		int[] getCellDimensions()
+		{
+			return cellDimensions;
+		}
+
+		int getNumFetcherThreads()
+		{
+			return numFetcherThreads;
+		}
 	}
 
 	// test
-	public static void main( final String[] args ) throws IOException
+	public static void main( final String[] args ) throws IOException, SpimDataException
 	{
 		final String name = "/Users/pietzsch/Desktop/nicola";
 		final int[] cellDimensions = new int[] { 64, 64, 64 };
@@ -196,6 +216,9 @@ public class XWingSpimData
 		if ( directory.isDirectory() )
 		{
 			final SpimDataMinimal spimData = open( directory, cellDimensions, numFetcherThreads );
+
+			new XmlIoSpimDataMinimal().save( spimData, "/USers/pietzsch/Desktop/xwing.xml" );
+
 			final BigDataViewer bdv = BigDataViewer.open( spimData, "BigDataViewer", new ProgressWriterConsole(), ViewerOptions.options() );
 			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.getViewer(), bdv.getSetupAssignments() );
 		}

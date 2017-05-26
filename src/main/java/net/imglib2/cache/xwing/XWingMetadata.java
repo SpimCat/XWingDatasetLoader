@@ -98,6 +98,11 @@ public class XWingMetadata
 		return items.size();
 	}
 
+	public File getDirectory()
+	{
+		return directory;
+	}
+
 	// =============================================================
 
 	private static IndexEntry parseIndexLine( final String line )
