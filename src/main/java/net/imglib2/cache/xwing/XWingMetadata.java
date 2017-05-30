@@ -85,7 +85,7 @@ public class XWingMetadata
 					i.id,
 					i.metadata.voxelDims,
 					i.dimensions,
-					directory.toPath().resolve( String.format( "%06d.raw", i.id ) ).toFile().getAbsolutePath() ) );
+					directory.toPath().resolve( String.format( "stacks/default/%06d.raw", i.id ) ).toFile().getAbsolutePath() ) );
 	}
 
 	public XWingMetadataItem get( final int index )
