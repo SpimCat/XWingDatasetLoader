@@ -15,16 +15,18 @@ import fiji.util.gui.GenericDialogPlus;
 import ij.IJ;
 import ij.ImageJ;
 
-@Plugin( type = Command.class, menuPath = "Plugins>Open XWing Nicola" )
+@Plugin( type = Command.class, menuPath = "XWing>Open XWing RAW Dataset" )
 public class OpenXWingCommand implements Command
 {
-	public static String directory = "/Users/pietzsch/Desktop/nicola";
+	public static String directory = "C:\\structure\\data\\xwing\\2017-11-15-14-08-58-36-robert_fusion_test2";
 
 	public static String cellDimensions = "64, 64, 64";
 
 	public static int numFetcherThreads = 1;
 
 	public static String openTypeChoices[] = new String[] { "BigDataViewer Dataset", "Virtual Stack" };
+
+	public static String dataset = "default";
 
 	public static int openType = 0;
 

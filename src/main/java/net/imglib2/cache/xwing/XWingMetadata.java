@@ -76,8 +76,13 @@ public class XWingMetadata
 				}
 
 		for ( final IndexEntry i : index )
-			if ( i.metadata == null  )
-				throw new IllegalArgumentException("no metadata for " + i );
+		{
+			if (i.metadata == null)
+			{
+				i.metadata = new MetaDataEntry(0, new double[] { 1, 1, 1 });
+				System.out.println("Warning: no meta data found for " + i.id);
+			}
+		}	//throw new IllegalArgumentException("no metadata for " + i );
 
 		items = new ArrayList<>();
 		for ( final IndexEntry i : index )
@@ -129,14 +134,17 @@ public class XWingMetadata
 	{
 		final int start = line.indexOf( "{" ) + 1;
 		final int end = line.indexOf( "}" ) - 1;
-		final String[] entries = line.substring( start, end ).split( ",\\s+" );
+		if (end - start < 1) {
+			return new MetaDataEntry(0, new double[]{1,1,1});
+		}
+		final String[] entries = line.substring( start, end ).split( "," );
 
 		int timepoint = -1;
 		final double[] voxelDims = new double[ 3 ];
 		for ( final String entry : entries )
 		{
-			final String[] kv = entry.split( "\\s*=\\s*" );
-			switch( kv[ 0 ] )
+			final String[] kv = entry.split( ":" );
+			switch( kv[ 0 ].replace("\"", "") )
 			{
 			case "TimePoint":
 				timepoint = Integer.parseInt( kv[ 1 ] );
@@ -154,7 +162,7 @@ public class XWingMetadata
 		}
 
 		if ( timepoint == -1 )
-			throw new IllegalArgumentException();
+			timepoint = 0;
 
 		return new MetaDataEntry( timepoint, voxelDims );
 	}
