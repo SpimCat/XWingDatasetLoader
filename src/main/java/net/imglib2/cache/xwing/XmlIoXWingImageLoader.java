@@ -19,6 +19,7 @@ public class XmlIoXWingImageLoader implements XmlIoBasicImgLoader< XWingImageLoa
 	public static final String DIRECTORY_TAG = "imagedirectory";
 	public static final String CELL_DIMENSIONS_TAG = "celldimensions";
 	public static final String NUM_FETCHER_THREADS_TAG = "numfetcherthreads";
+	public static final String dataset = "default";
 
 	@Override
 	public Element toXml( final XWingImageLoader imgLoader, final File basePath )
@@ -40,7 +41,7 @@ public class XmlIoXWingImageLoader implements XmlIoBasicImgLoader< XWingImageLoa
 			final String path = XmlHelpers.loadPath( elem, DIRECTORY_TAG, basePath ).toString();
 			final int[] cellDimensions = XmlHelpers.getIntArray( elem, CELL_DIMENSIONS_TAG );
 			final int numFetcherThreads = XmlHelpers.getInt( elem, NUM_FETCHER_THREADS_TAG );
-			final XWingMetadata metadata = new XWingMetadata( new File( path ) );
+			final XWingMetadata metadata = new XWingMetadata( new File( path ) , dataset);
 			return new XWingImageLoader( metadata, cellDimensions, numFetcherThreads );
 		}
 		catch ( final IOException e )

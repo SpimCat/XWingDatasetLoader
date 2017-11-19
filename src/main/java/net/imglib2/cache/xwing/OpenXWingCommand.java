@@ -35,6 +35,7 @@ public class OpenXWingCommand implements Command
 		gd.addDirectoryField( "directory", directory, 25 );
 		gd.addStringField( "cell sizes", cellDimensions, 25 );
 		gd.addNumericField( "num threads", numFetcherThreads, 0 );
+		gd.addChoice("Data set", new String[]{"C0L0","C0L1","C0L2","C0L3", "C1L0","C1L1","C1L2","C1L3", "default"}, dataset);
 		gd.addChoice( "open_as", openTypeChoices, openTypeChoices[ openType ] );
 
 		gd.showDialog();
@@ -44,6 +45,7 @@ public class OpenXWingCommand implements Command
 		directory = gd.getNextString();
 		cellDimensions = gd.getNextString();
 		numFetcherThreads = ( int ) gd.getNextNumber();
+		dataset = gd.getNextChoice();
 		openType = gd.getNextChoiceIndex();
 
 		// validate
@@ -52,12 +54,12 @@ public class OpenXWingCommand implements Command
 			IJ.error( directory + " is not a directory" );
 			return;
 		}
-		if ( ! new File( directory + "/default.index.txt" ).isFile() )
+		if ( ! new File( directory + "/" + dataset + ".index.txt" ).isFile() )
 		{
 			IJ.error( "default.index.txt not found" );
 			return;
 		}
-		if ( ! new File( directory + "/default.metadata.txt" ).isFile() )
+		if ( ! new File( directory + "/" + dataset + ".metadata.txt" ).isFile() )
 		{
 			IJ.error( "default.metadata.txt not found" );
 			return;
@@ -84,16 +86,16 @@ public class OpenXWingCommand implements Command
 		}
 
 		if ( openType == 0 )
-			openSpimData( directory, cellDims, numFetcherThreads );
+			openSpimData( directory, dataset, cellDims, numFetcherThreads );
 		else
-			openVirtualStack( directory, cellDims );
+			openVirtualStack( directory, dataset, cellDims );
 	}
 
-	private void openSpimData( final String directory, final int[] cellDims, final int numFetcherThreads )
+	private void openSpimData( final String directory, String dataset, final int[] cellDims, final int numFetcherThreads )
 	{
 		try
 		{
-			final SpimDataMinimal spimData = XWingSpimData.open( new File( directory) , cellDims, numFetcherThreads );
+			final SpimDataMinimal spimData = XWingSpimData.open( new File( directory), dataset , cellDims, numFetcherThreads );
 			final BigDataViewer bdv = BigDataViewer.open( spimData, "BigDataViewer", new ProgressWriterConsole(), ViewerOptions.options() );
 			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.getViewer(), bdv.getSetupAssignments() );
 		}
@@ -104,11 +106,11 @@ public class OpenXWingCommand implements Command
 		}
 	}
 
-	private void openVirtualStack( final String directory, final int[] cellDims )
+	private void openVirtualStack( final String directory, String dataset, final int[] cellDims )
 	{
 		try
 		{
-			XWingVirtualStack.open( new File( directory) , cellDims );
+			XWingVirtualStack.open( new File( directory), dataset , cellDims );
 		}
 		catch ( final IOException e )
 		{
