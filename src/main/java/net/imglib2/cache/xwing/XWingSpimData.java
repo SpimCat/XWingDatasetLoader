@@ -42,9 +42,9 @@ import net.imglib2.util.Util;
 
 public class XWingSpimData
 {
-	public static SpimDataMinimal open( final File directory, final int[] cellDimensions, final int numFetcherThreads ) throws IOException
+	public static SpimDataMinimal open( final File directory, String dataset, final int[] cellDimensions, final int numFetcherThreads ) throws IOException
 	{
-		final XWingMetadata metadata = new XWingMetadata( directory );
+		final XWingMetadata metadata = new XWingMetadata( directory , dataset);
 
 		final HashMap< Integer, TimePoint > timepointMap = new HashMap<>();
 		for ( int i = 0; i < metadata.size(); ++i )
@@ -215,7 +215,7 @@ public class XWingSpimData
 		final File directory = new File( name );
 		if ( directory.isDirectory() )
 		{
-			final SpimDataMinimal spimData = open( directory, cellDimensions, numFetcherThreads );
+			final SpimDataMinimal spimData = open( directory, "default", cellDimensions, numFetcherThreads );
 
 			new XmlIoSpimDataMinimal().save( spimData, "/USers/pietzsch/Desktop/xwing.xml" );
 
