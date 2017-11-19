@@ -8,8 +8,8 @@
 		<version>9.0.0</version>
 	</parent>
 
-	<artifactId>nicolaxwing</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>XWingDatasetLoader</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<name>xwing image reader</name>
 	<description>open xwing datasets as spimdata or virtual stacks</description>
@@ -48,6 +48,16 @@
 				<role>maintainer</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>haesleinhuepf</id>
+			<name>Robert Haase</name>
+			<url>https://haesleinhuepf.net</url>
+			<organization>MPI CBG</organization>
+			<roles>
+				<role>developer</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
 	</developers>
 	<contributors>
 		<!--
@@ -67,18 +77,17 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:git:git://github.com/tpietzsch/nicolaxwing</connection>
-		<developerConnection>scm:git:git@github.com:tpietzsch/nicolaxwing</developerConnection>
+		<connection>scm:git:git://github.com/haesleinhuepf/XWingDatasetLoader</connection>
+		<developerConnection>scm:git:git@github.com:haesleinhuepf/XWingDatasetLoader</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/tpietzsch/nicolaxwing</url>
+		<url>https://github.com/haesleinhuepf/XWingDatasetLoader</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/tpietzsch/nicolaxwing/issues</url>
+		<url>https://github.com/haesleinhuepf/XWingDatasetLoaderg/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/tpietzsch/nicolaxwing</url>
+		<system>None</system>
 	</ciManagement>
 
 	<properties>
