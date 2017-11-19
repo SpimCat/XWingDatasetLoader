@@ -73,9 +73,9 @@ public class XWingVirtualStack
 		return img;
 	}
 
-	public static ImagePlus open( final File directory, final int[] cellDimensions ) throws IOException
+	public static ImagePlus open( final File directory, String dataset, final int[] cellDimensions ) throws IOException
 	{
-		final XWingMetadata metadata = new XWingMetadata( directory );
+		final XWingMetadata metadata = new XWingMetadata( directory, dataset );
 
 		final Img< UnsignedShortType > img = open( metadata, cellDimensions );
 
@@ -100,7 +100,7 @@ public class XWingVirtualStack
 		final File directory = new File( name );
 		if ( directory.isDirectory() )
 		{
-			open( directory, cellDimensions );
+			open( directory, "default", cellDimensions );
 		}
 	}
 }
