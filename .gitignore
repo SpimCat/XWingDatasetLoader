@@ -13,3 +13,5 @@ target
 *.orig
 # For Fiji #
 *.jar
+/.idea/
+*.iml
