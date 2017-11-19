@@ -55,15 +55,15 @@ public class XWingMetadata
 		}
 	}
 
-	public XWingMetadata( final File directory ) throws IOException
+	public XWingMetadata( final File directory, String dataset ) throws IOException
 	{
 		this.directory = directory;
 
-		final List< IndexEntry > index = Files.lines( directory.toPath().resolve( "default.index.txt" ) )
+		final List< IndexEntry > index = Files.lines( directory.toPath().resolve( dataset + ".index.txt" ) )
 				.map( XWingMetadata::parseIndexLine )
 				.collect( Collectors.toList() );
 
-		final List< MetaDataEntry > metadata = Files.lines( directory.toPath().resolve( "default.metadata.txt" ) )
+		final List< MetaDataEntry > metadata = Files.lines( directory.toPath().resolve( dataset + ".metadata.txt" ) )
 				.map( XWingMetadata::parseMetadataLine )
 				.collect( Collectors.toList() );
 
