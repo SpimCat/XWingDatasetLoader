@@ -2,6 +2,7 @@ package net.imglib2.cache.xwing;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel.MapMode;
@@ -28,7 +29,13 @@ public class MemoryMappedStack
 		IntervalIndexer.createAllocationSteps( stackdim, steps );
 		final long bytesize = Intervals.numElements( stackdim ) * 2;
 		final MappedByteBuffer in = mmFile.getChannel().map( MapMode.READ_ONLY, 0, bytesize );
+
+		in.order(ByteOrder.LITTLE_ENDIAN);
+
 		buf = in.asShortBuffer();
+
+
+
 	}
 
 	public int[] getDimensions()
