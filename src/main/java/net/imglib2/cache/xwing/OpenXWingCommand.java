@@ -37,7 +37,7 @@ public class OpenXWingCommand implements Command
 		gd.addDirectoryField( "directory", directory, 25 );
 		gd.addStringField( "cell sizes", cellDimensions, 25 );
 		gd.addNumericField( "num threads", numFetcherThreads, 0 );
-		gd.addChoice("Data set", new String[]{"C0L0","C0L1","C0L2","C0L3", "C1L0","C1L1","C1L2","C1L3", "default"}, dataset);
+		gd.addChoice("Data set", new String[]{"C0L0","C0L1","C0L2","C0L3", "C1L0","C1L1","C1L2","C1L3", "C0", "C1", "C0_EDF", "C1_EDF", "default"}, dataset);
 		gd.addChoice( "open_as", openTypeChoices, openTypeChoices[ openType ] );
 
 		gd.showDialog();
