@@ -71,7 +71,6 @@ public class XWingSpimData
 			registrations.put( new ViewId( timepointId, setupId ), new ViewRegistration( timepointId, setupId, calib ) );
 		}
 		final SpimDataMinimal spimData = new SpimDataMinimal( basePath, seq, new ViewRegistrations( registrations ) );
-
 		return spimData;
 	}
 

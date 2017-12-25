@@ -3,7 +3,9 @@ package net.imglib2.cache.xwing;
 import java.io.File;
 import java.io.IOException;
 
+import de.mpicbg.rhaase.bdvtools.BigDataViewerPluginService;
 import org.scijava.command.Command;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import bdv.BigDataViewer;
@@ -18,7 +20,11 @@ import ij.ImageJ;
 @Plugin( type = Command.class, menuPath = "XWing>Open XWing RAW Dataset" )
 public class OpenXWingCommand implements Command
 {
-	public static String directory = "C:\\structure\\data\\xwing\\2017-11-15-14-08-58-36-robert_fusion_test2";
+
+	@Parameter
+	BigDataViewerPluginService bdvPluginService;
+
+	public static String directory = "C:\\structure\\data\\xwing\\2017-12-22-18-32-38-43-finally_something_alive";
 
 	public static String cellDimensions = "64, 64, 64";
 
@@ -98,8 +104,10 @@ public class OpenXWingCommand implements Command
 		try
 		{
 			final SpimDataMinimal spimData = XWingSpimData.open( new File( directory), dataset , cellDims, numFetcherThreads );
+
 			final BigDataViewer bdv = BigDataViewer.open( spimData, "BigDataViewer", new ProgressWriterConsole(), ViewerOptions.options() );
 			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.getViewer(), bdv.getSetupAssignments() );
+			bdvPluginService.injectPlugins(bdv);
 		}
 		catch ( final IOException e )
 		{
@@ -135,7 +143,10 @@ public class OpenXWingCommand implements Command
 	// test
 	public static void main( final String[] args )
 	{
-		ImageJ.main( args );
-		new OpenXWingCommand().run();
+		//ImageJ.main( args );
+		//new OpenXWingCommand().run();
+		net.imagej.ImageJ ij = new net.imagej.ImageJ();
+		ij.command().run(OpenXWingCommand.class, true, new Object[]{});
+
 	}
 }

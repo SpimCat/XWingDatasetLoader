@@ -8,7 +8,7 @@
 		<version>9.0.0</version>
 	</parent>
 
-	<artifactId>XWingDatasetLoader</artifactId>
+	<artifactId>anXWingDatasetLoader</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 
 	<name>xwing image reader</name>
@@ -102,6 +102,7 @@ Aivar Grislis, Jonathan Hale, Grant Harris, Stefan Helfrich, Mark Hiner,
 Martin Horn, Steffen Jaensch, Lee Kamentsky, Larry Lindsey, Melissa Linkert,
 Mark Longair, Brian Northan, Nick Perry, Curtis Rueden, Johannes Schindelin,
 Jean-Yves Tinevez and Michael Zinsmaier.</license.copyrightOwners>
+		<imagej.app.directory>C:/Programs/Fiji.app/</imagej.app.directory>
 	</properties>
 
 	<dependencies>
@@ -147,6 +148,15 @@ Jean-Yves Tinevez and Michael Zinsmaier.</license.copyrightOwners>
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>fiji-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.mpicbg.rhaase</groupId>
+			<artifactId>BigDataViewerPluginService</artifactId>
+			<version>0.1</version>
 		</dependency>
 
 		<!-- Test dependencies -->
