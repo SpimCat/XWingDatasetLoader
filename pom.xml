@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>net.imglib2</groupId>
 		<artifactId>pom-imglib2</artifactId>
-		<version>9.0.0</version>
+		<version>11.1.1</version>
 	</parent>
 
 	<artifactId>anXWingDatasetLoader</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0</version>
 
 	<name>xwing image reader</name>
 	<description>open xwing datasets as spimdata or virtual stacks</description>
@@ -102,7 +102,7 @@ Aivar Grislis, Jonathan Hale, Grant Harris, Stefan Helfrich, Mark Hiner,
 Martin Horn, Steffen Jaensch, Lee Kamentsky, Larry Lindsey, Melissa Linkert,
 Mark Longair, Brian Northan, Nick Perry, Curtis Rueden, Johannes Schindelin,
 Jean-Yves Tinevez and Michael Zinsmaier.</license.copyrightOwners>
-		<imagej.app.directory>C:/Programs/Fiji.app/</imagej.app.directory>
+		<imagej.app.directory>C:/programs/fiji-win64/Fiji.app/</imagej.app.directory>
 	</properties>
 
 	<dependencies>
@@ -155,8 +155,8 @@ Jean-Yves Tinevez and Michael Zinsmaier.</license.copyrightOwners>
 		</dependency>
 		<dependency>
 			<groupId>de.mpicbg.rhaase</groupId>
-			<artifactId>BigDataViewerPluginService</artifactId>
-			<version>0.1</version>
+			<artifactId>bigdataviewer-pluginservice</artifactId>
+			<version>0.3.0</version>
 		</dependency>
 
 		<!-- Test dependencies -->
