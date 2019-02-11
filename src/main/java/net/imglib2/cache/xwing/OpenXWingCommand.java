@@ -17,7 +17,7 @@ import fiji.util.gui.GenericDialogPlus;
 import ij.IJ;
 import ij.ImageJ;
 
-@Plugin( type = Command.class, menuPath = "XWing>Open XWing RAW Dataset" )
+@Plugin( type = Command.class, menuPath = "SpimCat>XWing>Open XWing RAW Dataset" )
 public class OpenXWingCommand implements Command
 {
 
